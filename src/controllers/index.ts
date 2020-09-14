@@ -1,8 +1,3 @@
-import { Request, Response } from 'express';
-import http from '../utils/http';
+import IndexController from './controller';
 
-export default {
-  index: async (req: Request, res: Response) => {
-    http.sendResponse(res, 200, { test: 'Sent' });
-  },
-};
+export default IndexController;
