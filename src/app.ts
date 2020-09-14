@@ -1,9 +1,15 @@
 import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+
+import indexC from './controllers/index';
 
 const app = express();
 
-app.get('/', (req, res) => {
-  return res.send('Teste de typescript');
-});
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
 
-app.listen(3000);
+app.get('/', indexC.index);
+
+export default app;
