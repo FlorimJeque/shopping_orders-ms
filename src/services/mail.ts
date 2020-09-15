@@ -4,6 +4,16 @@ const template = require('../utils/template');
 
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
+interface IMailParams {
+  to: string;
+  subject: string;
+  from: string;
+  text: string;
+  templateFile: string;
+  templateData: object;
+  attachments: Array<string>;
+}
+
 export default {
   sendMail: async (params: IMailParams) => {
     const msg = {
@@ -21,13 +31,3 @@ export default {
     return await sendgrid.send(msg);
   },
 };
-
-interface IMailParams {
-  to: string;
-  subject: string;
-  from: string;
-  text: string;
-  templateFile: string;
-  templateData: object;
-  attachments: Array<string>;
-}
