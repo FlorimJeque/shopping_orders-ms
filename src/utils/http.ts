@@ -7,7 +7,6 @@ export default {
   sendResponse: (response: Response, statusCode: number, data: object) => {
     response.status(statusCode);
     response.send(data);
-    return;
   },
 
   /**
