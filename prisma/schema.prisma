@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id         Int        @id @default(autoincrement())
+  name       String     @unique @db.VarChar(50)
+  price      Float
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  externalId Int        @unique
+  CartItem   CartItem[]
+}
+
+model Customer {
+  id         Int    @id @default(autoincrement())
+  externalId Int    @unique
+  name       String @unique @db.VarChar(100)
+  Cart       Cart?
+}
+
+model Cart {
+  id         Int        @id @default(autoincrement())
+  customerId Int        @unique
+  customer   Customer   @relation(fields: [customerId], references: [externalId])
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  cartItems  CartItem[]
+}
+
+model CartItem {
+  id            Int      @id @default(autoincrement())
+  cartId        Int
+  productId     Int
+  product       Product  @relation(fields: [productId], references: [id])
+  cart          Cart     @relation(fields: [cartId], references: [id])
+  quatity       Int      @db.Int()
+  originalPrice Float
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

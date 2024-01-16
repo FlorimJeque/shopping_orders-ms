@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 
 import routes from './routes/routes';
 
+import cartRoutes from './routes/cart.routes';
+
+import './services/consumers';
 dotenv.config();
 
 const app = express();
@@ -14,5 +17,5 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.get('/', routes);
-
+app.use('/cart', cartRoutes);
 export default app;
