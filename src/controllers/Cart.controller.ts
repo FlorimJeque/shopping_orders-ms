@@ -7,7 +7,7 @@ class CartController {
     try {
       const product = await prisma.product.findFirst({ where: { externalId: req.body.productId } });
       if (!product) {
-        http.sendResponse(res, 201, { message: 'Product added to cart' });
+        http.sendResponse(res, 404, { message: 'Product not found' });
         return;
       }
 
@@ -81,7 +81,7 @@ class CartController {
           },
         },
       });
-      http.sendResponse(res, 201, { message: 'Retrieved order items', cart });
+      http.sendResponse(res, 200, { message: 'Retrieved order items', cart });
     } catch (error) {
       console.log(error);
       http.sendResponse(res, 500, { error, body: req.body });
