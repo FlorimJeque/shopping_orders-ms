@@ -19,7 +19,7 @@ class CartController {
       });
       let data = {
         originalPrice: product?.price,
-        quatity: parseInt(req.body.quantity),
+        quantity: parseInt(req.body.quantity),
         cartId: parseInt(cart?.id + ''),
         productId: parseInt(product?.id + ''),
       };
@@ -42,7 +42,7 @@ class CartController {
         await prisma.cartItem.create({
           data: {
             originalPrice: data.originalPrice,
-            quatity: data.quatity,
+            quantity: data.quantity,
             cartId: data.cartId,
             productId: parseInt(product.id + ''),
           },
@@ -75,7 +75,7 @@ class CartController {
           cartItems: {
             select: {
               originalPrice: true,
-              quatity: true,
+              quantity: true,
               product: { select: { name: true } },
             },
           },
@@ -98,13 +98,13 @@ class CartController {
           cartItems: {
             select: {
               originalPrice: true,
-              quatity: true,
+              quantity: true,
               product: { select: { name: true } },
             },
           },
         },
       });
-      http.sendResponse(res, 201, { message: 'Retrieved order items', cart });
+      http.sendResponse(res, 200, { message: 'Retrieved order items', cart });
     } catch (error) {
       console.log(error);
       http.sendResponse(res, 500, { error, body: req.body });
@@ -123,7 +123,7 @@ class CartController {
           product: { select: { name: true } },
         },
       });
-      http.sendResponse(res, 201, { message: 'Retrieved order items', items });
+      http.sendResponse(res, 200, { message: 'Retrieved order items', items });
     } catch (error) {
       console.log(error);
       http.sendResponse(res, 500, { error, body: req.body });
@@ -134,8 +134,37 @@ class CartController {
     try {
       const cart = await prisma.cart.findFirst({
         where: {
-          id: req.body.cartId,
-          customer: req.body.customerId,
+          id: parseInt(req.params.cartId),
+          customer: { externalId: req.body.customerId },
+          isActive: true,
+        },
+      });
+
+      if (!cart) {
+        http.sendResponse(res, 404, { message: 'Resource not found' });
+        return;
+      }
+
+      await prisma.cartItem.deleteMany({
+        where: {
+          cartId: parseInt(cart?.id),
+          product: { externalId: req.body.productId },
+        },
+      });
+
+      http.sendResponse(res, 200, { message: 'Item removed from cart' });
+    } catch (error) {
+      console.log(error);
+      http.sendResponse(res, 500, { error, body: req.body });
+    }
+  }
+
+  async clearCart(req: Request, res: Response) {
+    try {
+      const cart = await prisma.cart.findFirst({
+        where: {
+          id: parseInt(req.params.cartId),
+          customer: { externalId: req.body.customerId },
           isActive: true,
         },
       });
@@ -144,12 +173,19 @@ class CartController {
         http.sendResponse(res, 404, { message: 'Resource not found' });
       }
 
-      await prisma.cartItem.delete({
+      await prisma.cartItem.deleteMany({
         where: {
           cartId: parseInt(cart?.id),
-          product: { externalId: req.body.productId },
         },
       });
+
+      await prisma.cart.delete({
+        where: {
+          id: parseInt(cart?.id),
+        },
+      });
+
+      http.sendResponse(res, 200, { message: 'Cart cleared' });
     } catch (error) {
       console.log(error);
       http.sendResponse(res, 500, { error, body: req.body });

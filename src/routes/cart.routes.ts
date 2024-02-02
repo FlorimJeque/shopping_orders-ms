@@ -17,14 +17,14 @@ import CartController from '../controllers/Cart.controller';
  *           description: The id of the Customer that the cart belongs to
  *           type: integer
  *           example: 3
- *         quatity:
+ *         quantity:
  *           description: The id of the Customer that the cart belongs to
  *           type: integer
  *           example: 3
  *       required:
  *         - customerId
  *         - productId
- *         - quatity
+ *         - quantity
  * tags:
  *   name: Cart
  *   description: Api to manage customer Cart
@@ -76,7 +76,7 @@ routes.post('/addProduct', CartController.addProductToCart);
 routes.get('/getCart/:cartId', CartController.listCartItems);
 /**
  * @swagger
- * /getCustomerActiveCart/{customerId}:
+ * /cart/getCustomerActiveCart/{customerId}:
  *   get:
  *      tags: [Cart]
  *      summary: Return a customer active cart with items
@@ -97,7 +97,7 @@ routes.get('/getCustomerActiveCart/:customerId', CartController.getCustomerActiv
 
 /**
  * @swagger
- * /getAllCustomerItems/{customerId}:
+ * /cart/getAllCustomerItems/{customerId}:
  *   get:
  *      tags: [Cart]
  *      summary: Return all customer items added even if the cart has been processed
@@ -115,4 +115,78 @@ routes.get('/getCustomerActiveCart/:customerId', CartController.getCustomerActiv
  *            'application/json': {}
  */
 routes.get('/getAllCustomerItems/:customerId', CartController.getAllCustomerItems);
+
+/**
+ * @swagger
+ * /cart/removeItemFromCart/{cartId}:
+ *   delete:
+ *     tags: [Cart]
+ *     summary: Remove one item from customer cart
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               customerId:
+ *                 type: integer
+ *                 description: Id of customer
+ *               productId:
+ *                 type: integer
+ *                 description: Product id to be removed
+ *     responses:
+ *       200:
+ *         description: Item removed from cart
+ *         content:
+ *           'application/json': {}
+ *       404:
+ *         description: Cart not found
+ *         content:
+ *           'application/json': {}
+ *       500:
+ *         description: Server error
+ *         content:
+ *           'application/json': {}
+ */
+routes.delete('/removeItemFromCart/:cartId', CartController.removeItemFromCart);
+
+/**
+ * @swagger
+ * /cart/clearCart/{cartId}:
+ *   delete:
+ *     tags: [Cart]
+ *     summary: Clear customer active cart
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               customerId:
+ *                 type: integer
+ *                 description: Id of customer
+ *     responses:
+ *       200:
+ *         description: Cart cleared
+ *         content:
+ *           'application/json': {}
+ *       404:
+ *         description: Cart not found
+ *         content:
+ *           'application/json': {}
+ *       500:
+ *         description: Server error
+ *         content:
+ *           'application/json': {}
+ */
+routes.delete('/clearCart/:cartId', CartController.clearCart);
+
 export default routes;

@@ -43,7 +43,7 @@ model CartItem {
   productId     Int
   product       Product  @relation(fields: [productId], references: [id])
   cart          Cart     @relation(fields: [cartId], references: [id])
-  quatity       Int      @db.Int()
+  quantity      Int      @default(0) @db.Int()
   originalPrice Float
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
