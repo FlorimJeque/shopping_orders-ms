@@ -12,16 +12,19 @@ import CartController from '../controllers/Cart.controller';
  *           description: The id of the Customer that the cart belongs to
  *           type: integer
  *           required: true
+ *           example: 3
  *         productId:
  *           description: The id of the Customer that the cart belongs to
  *           type: integer
- *         quantity:
+ *           example: 3
+ *         quatity:
  *           description: The id of the Customer that the cart belongs to
  *           type: integer
+ *           example: 3
  *       required:
  *         - customerId
  *         - productId
- *         - quantity
+ *         - quatity
  * tags:
  *   name: Cart
  *   description: Api to manage customer Cart
@@ -37,10 +40,6 @@ const routes = Router();
  *      requestBody:
  *        required: true
  *        content:
- *          application/x-www-form-urlencoded:
- *            schema:
- *              $ref: '#/components/schemas/AddProductRequest'
- *
  *          application/json:
  *            schema:
  *              $ref: '#/components/schemas/AddProductRequest'
