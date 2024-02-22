@@ -2,7 +2,7 @@ import amqplib from 'amqplib';
 
 export default class RabbitMQ {
   async connection() {
-    return await amqplib.connect('amqp://localhost');
+    return await amqplib.connect(process.env.RABBITMQ_URL);
   }
 
   async publish(queue: any, data: any) {
