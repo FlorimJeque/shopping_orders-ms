@@ -24,13 +24,13 @@ model Customer {
   id         Int    @id @default(autoincrement())
   externalId Int    @unique
   name       String @unique @db.VarChar(100)
-  Cart       Cart?
+  Cart       Cart[]
 }
 
 model Cart {
   id         Int        @id @default(autoincrement())
-  customerId Int        @unique
-  customer   Customer   @relation(fields: [customerId], references: [externalId])
+  customerId Int
+  customer   Customer   @relation(fields: [customerId], references: [id])
   isActive   Boolean    @default(true)
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt

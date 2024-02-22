@@ -189,4 +189,41 @@ routes.delete('/removeItemFromCart/:cartId', CartController.removeItemFromCart);
  */
 routes.delete('/clearCart/:cartId', CartController.clearCart);
 
+/**
+ * @swagger
+ * /cart/payOrder/{cartId}:
+ *   put:
+ *     summary: Process order and put a cart on inactive
+ *     tags: [Cart]
+ *     parameters:
+ *       - in: path
+ *         name: cartId
+ *         required: true
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               customerId:
+ *                 type: integer
+ *                 description: Id of customer
+ *             required:
+ *              - customerId
+ *     responses:
+ *       200:
+ *         description: Order processed
+ *         content:
+ *           'application/json': {}
+ *       404:
+ *         description: Cart not found
+ *         content:
+ *           'application/json': {}
+ *       500:
+ *         description: Server error
+ *         content:
+ *           'application/json': {}
+ */
+routes.put('/payOrder/:cartId', CartController.payOrder);
+
 export default routes;

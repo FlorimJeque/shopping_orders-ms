@@ -14,7 +14,7 @@ class CartController {
       let cart = await prisma.cart.findFirst({
         where: {
           customerId: req.body.customerId,
-          isActive: true,
+          isActive: Boolean(true),
         },
       });
       let data = {
@@ -36,7 +36,7 @@ class CartController {
             where: { id: cartItem?.id },
             data: data,
           });
-          http.sendResponse(res, 201, { message: 'Cart updated' });
+          http.sendResponse(res, 200, { message: 'Cart updated' });
           return;
         }
         await prisma.cartItem.create({
@@ -93,6 +93,7 @@ class CartController {
       const cart = await prisma.cart.findFirst({
         where: {
           customer: { externalId: parseInt(req.params.customerId) },
+          isActive: true,
         },
         include: {
           cartItems: {
@@ -104,6 +105,10 @@ class CartController {
           },
         },
       });
+      if (!cart) {
+        http.sendResponse(res, 404, { message: 'Resource not found' });
+        return;
+      }
       http.sendResponse(res, 200, { message: 'Retrieved order items', cart });
     } catch (error) {
       console.log(error);
@@ -171,21 +176,51 @@ class CartController {
 
       if (!cart) {
         http.sendResponse(res, 404, { message: 'Resource not found' });
+        return;
       }
 
       await prisma.cartItem.deleteMany({
         where: {
-          cartId: parseInt(cart?.id),
+          cartId: +cart?.id,
         },
       });
 
       await prisma.cart.delete({
         where: {
-          id: parseInt(cart?.id),
+          id: +cart?.id,
         },
       });
 
       http.sendResponse(res, 200, { message: 'Cart cleared' });
+    } catch (error) {
+      console.log(error);
+      http.sendResponse(res, 500, { error, body: req.body });
+    }
+  }
+
+  async payOrder(req: Request, res: Response) {
+    try {
+      const cart = await prisma.cart.findFirst({
+        where: {
+          id: parseInt(req.params.cartId),
+          customer: { externalId: req.body.customerId },
+          isActive: true,
+        },
+      });
+
+      if (!cart) {
+        http.sendResponse(res, 404, { message: 'Resource not found' });
+        return;
+      }
+
+      await prisma.cart.update({
+        where: { id: +cart?.id },
+        data: {
+          isActive: false,
+        },
+      });
+
+      http.sendResponse(res, 200, { message: 'Cart processed' });
     } catch (error) {
       console.log(error);
       http.sendResponse(res, 500, { error, body: req.body });
